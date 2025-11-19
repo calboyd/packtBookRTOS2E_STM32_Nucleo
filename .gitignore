@@ -1,3 +1,4 @@
 *.jdebug
 *.elf
+*.jdebug.user
 Debug/
