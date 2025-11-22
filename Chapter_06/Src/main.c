@@ -100,9 +100,9 @@ void StartDefaultTask(void *argument)
   {
     /* HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5); */
     GreenLed.On();
-    HAL_Delay(125);
+    HAL_Delay(1000);
     GreenLed.Off();
-    HAL_Delay(125);
+    HAL_Delay(1000);
   }
 }
 
