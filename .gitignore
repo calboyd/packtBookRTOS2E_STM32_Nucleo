@@ -2,3 +2,5 @@
 *.elf
 *.jdebug.user
 Debug/
+.DS_Store
+.metadata/
