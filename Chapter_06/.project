@@ -37,6 +37,11 @@
 			<location>/Users/calvinboyd/Projects/workspace_stm32_nucleo_64/BSP</location>
 		</link>
 		<link>
+			<name>Common</name>
+			<type>2</type>
+			<location>/Users/calvinboyd/Projects/workspace_stm32_nucleo_64/Common</location>
+		</link>
+		<link>
 			<name>Drivers</name>
 			<type>2</type>
 			<location>/Users/calvinboyd/Projects/workspace_stm32_nucleo_64/Drivers</location>
