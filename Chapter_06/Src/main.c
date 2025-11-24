@@ -1,109 +1,165 @@
-/* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2025 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* Includes ------------------------------------------------------------------*/
+ * TITLE:  Chapter 6 - FreeRTOS with three tasks
+ *
+ * DESCRIPTION:
+ * - This is an example program for the book
+ *   "Hands On RTOS with Microcontrollers" (2nd edition), for chapter 6.
+ * - FreeRTOS is run, with three tasks.  The tasks have different priorities.
+ * - For each task, when it starts, it turns on an LED to indicate it started.
+ * - The SystemView app is used to view the tasks' relative execution.
+ *
+ * USE:
+ * - Intended for use with Segger's Ozone and SystemView
+ * - The SystemView app's Record-mode must be run:
+ *   - Record-mode must be started after (but not before) the dev-board's blue user-LED is on.
+ *   - Task1's infinite loop won't run until Record-mode is started.
+ *   - Task2 and Task3 won't run until Record-mode is started.
+ */
+
+/**
+   Licenses:
+   - Copyright (c) 2019-2025 Packt Publishing, under the MIT License.
+   - Based on code copyrighted by Brian Amos, 2019, under the MIT License.
+   - See the code-repository's license statement for more information:
+     - https://github.com/PacktPublishing/Hands-On-RTOS-with-Microcontrollers-Second-Edition
+ */
+
 #include <FreeRTOS.h>
 #include <Nucleo_F411RE_Init.h>
 #include <stm32f4xx_hal.h>
 #include <Nucleo_F411RE_GPIO.h>
-#include <main.h>
-#include "cmsis_os.h"
-
-UART_HandleTypeDef huart2;
-
-/* Definitions for defaultTask */
-osThreadId_t defaultTaskHandle;
-const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
-
-static void MX_USART2_UART_Init(void);
-void StartDefaultTask(void *argument);
+#include <task.h>
+#include <SEGGER_SYSVIEW.h>
+#include <lookBusy.h>
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
+ * 	Function prototypes
+ */
+void Task1(void *argument);
+void Task2(void *argument);
+void Task3(void *argument);
+
+uint32_t iterationsPerMilliSecond;
+
 int main(void)
 {
+  // Recommended minimum stack size per task
+	//   128 * 4 = 512 bytes
+	const static uint32_t stackSize = 128;
+	HWInit();
+	SEGGER_SYSVIEW_Conf();
+	HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);	//ensure proper priority grouping for freeRTOS
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HWInit();
+	// Get the interation-rate for lookBusy()
+	iterationsPerMilliSecond = lookBusyIterationRate();
 
-  MX_USART2_UART_Init();
+	if (xTaskCreate(Task1, "task1", stackSize, NULL, tskIDLE_PRIORITY + 3, NULL) == pdPASS)
+	{
+		if (xTaskCreate(Task2, "task2", stackSize, NULL, tskIDLE_PRIORITY + 2, NULL) == pdPASS)
+		{
+			if (xTaskCreate(Task3, "task3", stackSize, NULL, tskIDLE_PRIORITY + 1, NULL) == pdPASS)
+			{
+				// Start the scheduler - shouldn't return unless there's a problem
+				vTaskStartScheduler();
+			}
+		}
+	}
 
-  /* Init scheduler */
-  osKernelInitialize();
+	// If you've wound up here, there is likely an issue with over-running the FreeRTOS heap
+	while(1)
+	{
+	}
+}
 
-  /* Create the thread(s) */
-  /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-  /* Start scheduler */
-  osKernelStart();
+void Task1(void *argument)
+{
+  uint32_t lookBusyIterations;
+  uint32_t iterationCount = 0;
 
-  /* We should never get here as control is now taken by the scheduler */
+  //BlueLed.On();
 
-  /* Infinite loop */
-  while (1)
+  // * The SystemView app's Record-mode cannot be started until after the FreeRTOS scheduler is started.
+  //   This is a SystemView requirement.
+  // * This while-loop spins until Record-mode is started.
+  // * Also, spinning until Record-mode is started ensures all of the SEGGER_SYSVIEW_PrintfHost()
+  //   messages will be displayed.
+  // * lookBusy() is used to slow-down the while-loop.
+  //   * SEGGER_SYSVIEW_IsStarted() communicates with the SystemView app on the development computer.
+  //   * There is a non-trivial communication latency. If SEGGER_SYSVIEW_IsStarted() is called
+  //     too frequently, it can cause overflow in SystemView.
+  while(SEGGER_SYSVIEW_IsStarted()==0){lookBusy(iterationsPerMilliSecond);}
+  SEGGER_SYSVIEW_PrintfHost("Task1: starting\n");
+
+  // Calculate the number of iterations for lookBusy().
+  // For Task1, lookBusy() needs to spin for 1/4 of a ms (processor time).
+  lookBusyIterations = iterationsPerMilliSecond / 4;
+
+  while(1)
   {
+    // SEGGER_SYSVIEW_PrintfHost is only called every 100 iterations, to prevent SystemView overflow.
+	  iterationCount++;
+	  if ((iterationCount % 100) == 1)
+	  {
+      SEGGER_SYSVIEW_PrintfHost("Task1. Iteration: %u\n", iterationCount);
+	  }
+	  // Simulate useful processing. Spin for 1/4 of a ms (processor time).
+	  lookBusy(lookBusyIterations);
+	  // vTaskDelay causes the task to be delayed for the specified number of SysTicks, i.e., 5
+	  vTaskDelay(5);
   }
 }
 
-/**
-  * @brief USART2 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USART2_UART_Init(void)
-{
-  huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
-  huart2.Init.WordLength = UART_WORDLENGTH_8B;
-  huart2.Init.StopBits = UART_STOPBITS_1;
-  huart2.Init.Parity = UART_PARITY_NONE;
-  huart2.Init.Mode = UART_MODE_TX_RX;
-  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart2) != HAL_OK)
-  {
-    Error_Handler();
-  }
 
+void Task2( void* argument )
+{
+  uint32_t lookBusyIterations;
+  uint32_t iterationCount = 0;
+
+  GreenLed.On();
+  SEGGER_SYSVIEW_PrintfHost("Task2: starting\n");
+  // For Task2, lookBusy() needs to spin for 1/2 of a ms (processor time).
+  lookBusyIterations = iterationsPerMilliSecond / 2;
+
+
+	while(1)
+	{
+    iterationCount++;
+    if ((iterationCount % 100) == 1)
+    {
+      SEGGER_SYSVIEW_PrintfHost("Task2. Iteration: %u\n", iterationCount);
+    }
+    // Simulate useful processing. Spin for 1/2 of a ms  (processor time).
+    lookBusy(lookBusyIterations);
+    // Delay processing until the next SysTick.
+    // At the next SysTick:
+    // * If Task1 is being delayed, then Task2 will resume.
+    // * If Task1 is not being delayed, then Task1 will run.
+    vTaskDelay(1);
+	}
 }
 
-/**
-  * @brief  Function implementing the defaultTask thread.
-  * @param  argument: Not used
-  * @retval None
-  */
-void StartDefaultTask(void *argument)
+
+void Task3( void* argument )
 {
-  /* Infinite loop */
-  for(;;)
-  {
-    /* HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5); */
-    GreenLed.On();
-    HAL_Delay(1000);
-    GreenLed.Off();
-    HAL_Delay(1000);
-  }
+  uint32_t lookBusyIterations;
+  uint32_t iterationCount = 0;
+
+  // RedLed.On();
+  SEGGER_SYSVIEW_PrintfHost("Task3: starting\n");
+  // For Task3, lookBusy() needs to spin for 2 ms (processor time).
+  lookBusyIterations = iterationsPerMilliSecond * 2;
+
+  while(1)
+	{
+    iterationCount++;
+    if ((iterationCount % 500) == 1)
+    {
+      SEGGER_SYSVIEW_PrintfHost("Task3. Iteration: %u\n", iterationCount);
+    }
+    // Simulate useful processing. Spin for 2 ms  (processor time).
+    lookBusy(lookBusyIterations);
+	}
 }
 
 /**
