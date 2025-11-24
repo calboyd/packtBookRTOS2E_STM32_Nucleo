@@ -28,7 +28,7 @@
 
 // SystemView example-code:
 // Include for using SEGGER_SYSVIEW_PrintfHost()
-//#include "../../Middlewares/Third_Party/SystemView/SEGGER/SEGGER_SYSVIEW.h"
+#include "../../Middlewares/Third_Party/SystemView/SYSVIEW/SEGGER_SYSVIEW.h"
 
 /* USER CODE END Includes */
 
@@ -108,7 +108,7 @@ int main(void)
 
   // SystemView example-code:
   // Initialize SEGGER SystemView
-  //SEGGER_SYSVIEW_Conf();
+  SEGGER_SYSVIEW_Conf();
 
   // FreeRTOS example-code:
   // Create Task1 and Task2, and start the FreeRTOS scheduler
@@ -272,8 +272,8 @@ void Task1(void *argument) {
     // SystemView example-code:
     // The SystemView app's Record-mode must be started after the FreeRTOS scheduler is started.
     // To get all of the SEGGER_SYSVIEW_PrintfHost() messages, spin until Record mode is started.
-    //while(SEGGER_SYSVIEW_IsStarted()==0);
-    //SEGGER_SYSVIEW_PrintfHost("Task1: loop starting...\n");
+    while(SEGGER_SYSVIEW_IsStarted()==0);
+    SEGGER_SYSVIEW_PrintfHost("Task1: loop starting...\n");
 
     for(;;) {
         // Toggle the green LED
@@ -283,7 +283,7 @@ void Task1(void *argument) {
 
         // SystemView example-code:
         // Generate SystemView message
-        //SEGGER_SYSVIEW_PrintfHost("Task1: LED toggled. Iteration: %u\n", iterationCount);
+        SEGGER_SYSVIEW_PrintfHost("Task1: LED toggled. Iteration: %u\n", iterationCount);
 
         // Delay 500ms
         vTaskDelay(500 / portTICK_PERIOD_MS);
@@ -303,11 +303,11 @@ void Task2(void *argument) {
         // Toggle the red LED
  //       HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 
-        // Generate SystemView message
         iterationCount++;
 
         // SystemView example-code:
-        //SEGGER_SYSVIEW_PrintfHost("Task2: LED toggled. Iteration: %u\n", iterationCount);
+        // Generate SystemView message
+        SEGGER_SYSVIEW_PrintfHost("Task2: LED toggled. Iteration: %u\n", iterationCount);
 
         // Delay 500ms
         vTaskDelay(500 / portTICK_PERIOD_MS);

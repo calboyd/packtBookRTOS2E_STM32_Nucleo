@@ -40,6 +40,8 @@
 									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F4xx/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/SystemView/Config"/>
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/RTT/Config"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input.1974736700" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input"/>
 							</tool>
@@ -63,6 +65,14 @@
 									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/include"/>
 									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
 									<listOptionValue builtIn="false" value="../Config/FreeRTOS/Inc"/>
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/RTT/Config"/>
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/RTT/RTT"/>
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/RTT/Syscalls"/>
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/SystemView/Config"/>
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/SystemView/Sample/FreeRTOSV11/Config"/>
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/SystemView/SEGGER"/>
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/SystemView/SYSVIEW"/>
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/SystemView/Sample/FreeRTOSV11"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1543621598" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
