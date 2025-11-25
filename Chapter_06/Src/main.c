@@ -153,7 +153,7 @@ void Task3( void* argument )
   while(1)
 	{
     iterationCount++;
-    if ((iterationCount % 500) == 1)
+    if ((iterationCount % 1000) == 1)
     {
       SEGGER_SYSVIEW_PrintfHost("Task3. Iteration: %u\n", iterationCount);
     }
