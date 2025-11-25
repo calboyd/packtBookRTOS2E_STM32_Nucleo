@@ -135,8 +135,8 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
     GreenLed.On();
-    / * SEGGER_SYSVIEW_PrintfHost("assert failed. Line: %u.  File:", line); */
-    / * SEGGER_SYSVIEW_PrintfHost((char *) file); */
+    SEGGER_SYSVIEW_PrintfHost("assert failed. Line: %u.  File:", line);
+    SEGGER_SYSVIEW_PrintfHost((char *) file);
     while(1);
 }
 #endif // USE_FULL_ASSERT
