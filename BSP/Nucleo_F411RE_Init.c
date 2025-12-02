@@ -13,8 +13,7 @@ Licenses:
 #include <Nucleo_F411RE_GPIO.h>
 #include <main.h>
 /* #include <SEGGER_SYSVIEW.h> */
-
-
+#include <stdlib.h>
 
 // declarations for 'private' functions not exposed via header file
 void SystemClock_Config(void);
@@ -34,6 +33,17 @@ void HWInit( void )
 	HAL_Init();
 	SystemClock_Config();
 	gpioPinsInit();			//initialize GPIO lines for LED's
+}
+
+/**
+ * NOTE:this function doesn't guarantee a new number every call
+ * @param Min smallest number to generate
+ * @param Max largest number to generate
+ * @returns a pseudo random number from the dedicated RNG peripheral
+ */
+uint32_t StmRand( uint32_t Min, uint32_t Max )
+{
+    return ((uint32_t) (Min + rand() % (Max - Min + 1)));
 }
 
 void SystemClock_Config(void)
