@@ -11,13 +11,13 @@ Licenses:
 */
 
 #include <FreeRTOS.h>
-#include <Nucleo_F767ZI_GPIO.h>
+#include <Nucleo_F411RE_GPIO.h>
 #include <task.h>
 #include <semphr.h>
 #include <timers.h>
 #include <SEGGER_SYSVIEW.h>
-#include <Nucleo_F767ZI_Init.h>
-#include <stm32f7xx_hal.h>
+#include <Nucleo_F411RE_Init.h>
+#include <stm32f4xx_hal.h>
 #include <lookBusy.h>
 
 #define STACK_SIZE 128
@@ -56,12 +56,12 @@ int main(void)
 void taskStartTimers( void* argument )
 {
     // Indicate taskStartTimers started
-    RedLed.On();
+    //RedLed.On();
     // Spin until the user starts the SystemView app, in Record mode
     while(SEGGER_SYSVIEW_IsStarted()==0){
         lookBusy(iterationsPerMilliSecond);
     }
-    RedLed.Off();
+    //RedLed.Off();
 
 	SEGGER_SYSVIEW_PrintfHost("taskStartTimers: starting");
 
@@ -70,7 +70,7 @@ void taskStartTimers( void* argument )
     //
 
 	// Start with Blue LED on - it will be turned off after one-shot fires
-	BlueLed.On();
+	//BlueLed.On();
 	SEGGER_SYSVIEW_PrintfHost("taskStartTimers: blue LED on");
 	TimerHandle_t oneShotHandle =
 		xTimerCreate(	"myOneShotTimer",			//name for timer
@@ -115,7 +115,7 @@ void taskStartTimers( void* argument )
 void oneShotCallBack( TimerHandle_t xTimer )
 {
 	SEGGER_SYSVIEW_PrintfHost("oneShotCallBack:  blue LED off");
-	BlueLed.Off();
+	//BlueLed.Off();
 }
 
 

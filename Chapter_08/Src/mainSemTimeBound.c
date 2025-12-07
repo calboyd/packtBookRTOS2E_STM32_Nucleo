@@ -15,14 +15,14 @@ Licenses:
 #include <task.h>
 #include <semphr.h>
 #include <SEGGER_SYSVIEW.h>
-#include <Nucleo_F767ZI_GPIO.h>
-#include <Nucleo_F767ZI_Init.h>
-#include <stm32f7xx_hal.h>
+#include <Nucleo_F411RE_GPIO.h>
+#include <Nucleo_F411RE_Init.h>
+#include <stm32f4xx_hal.h>
 
 #define STACK_SIZE 128
 
 static void greenBlink( void );
-static void blueTripleBlink( void );
+// static void blueTripleBlink( void );
 
 void GreenTaskA( void * argument);
 void TaskB( void* argumet );
@@ -95,15 +95,15 @@ void TaskB( void* argument )
 		SEGGER_SYSVIEW_PrintfHost("attempt to take semPtr");
 		if(xSemaphoreTake(semPtr, 500/portTICK_PERIOD_MS) == pdPASS)
 		{
-			RedLed.Off();
+			//RedLed.Off();
 			SEGGER_SYSVIEW_PrintfHost("received semPtr");
-			blueTripleBlink();
+			//blueTripleBlink();
 		}
 		else
 		{
 			// This code is run when the semaphore wasn't taken in time
 			SEGGER_SYSVIEW_PrintfHost("FAILED to receive semPtr in time");
-			RedLed.On();
+			//RedLed.On();
 		}
 	}
 }
@@ -122,7 +122,7 @@ static void greenBlink( void )
 /**
  * blink the Blue LED 3 times in rapid succession using vtaskDelay
  */
-static void blueTripleBlink( void )
+/* static void blueTripleBlink( void )
 {
 	//triple blink the Blue LED
 	for(uint_fast8_t i = 0; i < 3; i++)
@@ -132,4 +132,4 @@ static void blueTripleBlink( void )
 		BlueLed.Off();
 		vTaskDelay(50/portTICK_PERIOD_MS);
 	}
-}
+} */

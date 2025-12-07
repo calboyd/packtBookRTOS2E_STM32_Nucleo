@@ -15,9 +15,9 @@ Licenses:
 #include <task.h>
 #include <semphr.h>
 #include <SEGGER_SYSVIEW.h>
-#include <Nucleo_F767ZI_GPIO.h>
-#include <Nucleo_F767ZI_Init.h>
-#include <stm32f7xx_hal.h>
+#include <Nucleo_F411RE_GPIO.h>
+#include <Nucleo_F411RE_Init.h>
+#include <stm32f4xx_hal.h>
 #include <lookBusy.h>
 
 #define STACK_SIZE 128
@@ -83,7 +83,7 @@ void TaskA( void* argument )
         SEGGER_SYSVIEW_PrintfHost("attempt to take semPtr");
         if(xSemaphoreTake(semPtr, 200/portTICK_PERIOD_MS) == pdPASS)
         {
-            RedLed.Off();
+            //RedLed.Off();
             receivedCounter++;
             // In calling SEGGER_SYSVIEW_PrintfHost, the space between the %u and the closing
             // quote appears to be a necessary work-around for a bug in the API.
@@ -96,7 +96,7 @@ void TaskA( void* argument )
             // This code is called when the semaphore wasn't taken in time
             timedoutCounter++;
             SEGGER_SYSVIEW_PrintfHost("FAILED to receive semPtr in time: %u ", timedoutCounter);
-            RedLed.On();
+            //RedLed.On();
         }
         // Wait for a bit to let other tasks run
         // StmRand will return a random number between 5 and 30 (inclusive).
@@ -145,10 +145,10 @@ void TaskC( void* argument )
         SEGGER_SYSVIEW_PrintfHost("attempt to take semPtr");
         if(xSemaphoreTake(semPtr, 200/portTICK_PERIOD_MS) == pdPASS)
         {
-            RedLed.Off();
+            //RedLed.Off();
             receivedCounter++;
             SEGGER_SYSVIEW_PrintfHost("received semPtr: %u ", receivedCounter);
-            blinkTwice(&BlueLed);
+            //blinkTwice(&BlueLed);
             xSemaphoreGive(semPtr);
         }
         else
@@ -156,7 +156,7 @@ void TaskC( void* argument )
             // This code is called when the semaphore wasn't taken in time
             timedoutCounter++;
             SEGGER_SYSVIEW_PrintfHost("FAILED to receive semPtr in time: %u ", timedoutCounter);
-            RedLed.On();
+            //RedLed.On();
         }
     }
 }

@@ -15,9 +15,9 @@ Licenses:
 #include <task.h>
 #include <semphr.h>
 #include <SEGGER_SYSVIEW.h>
-#include <Nucleo_F767ZI_GPIO.h>
-#include <Nucleo_F767ZI_Init.h>
-#include <stm32f7xx_hal.h>
+#include <Nucleo_F411RE_GPIO.h>
+#include <Nucleo_F411RE_Init.h>
+#include <stm32f4xx_hal.h>
 #include <stdint.h>
 
 #define STACK_SIZE 128
@@ -93,9 +93,9 @@ void BlueTaskB( void* argument )
 		// Triple blink the Blue LED
 		for(uint_fast8_t i = 0; i < 3; i++)
 		{
-			BlueLed.On();
+			//BlueLed.On();
 			vTaskDelay(50/portTICK_PERIOD_MS);
-			BlueLed.Off();
+			//BlueLed.Off();
 			vTaskDelay(50/portTICK_PERIOD_MS);
 		}
 	}
